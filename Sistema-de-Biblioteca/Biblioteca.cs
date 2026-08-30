@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Sistema_de_Biblioteca
 {
@@ -59,22 +60,13 @@ namespace Sistema_de_Biblioteca
 
             public double CalcularDesconto()
             {
-                if (Tipo == "Bronze")
+                return Tipo switch
                 {
-                    return 0.00;
-                }
-                else if (Tipo == "Prata")
-                {
-                    return 0.5;
-                }
-                else if (Tipo == "Ouro")
-                {
-                    return 0.15;
-                }
-                else
-                {
-                    return 0.00;
-                }
+                    "Bronze" => 0.00,
+                    "Prata" => 0.10,
+                    "Ouro" => 0.15,
+                    _ => 0.00
+                };
             }
 
             public double AplicarDesconto(double valor)
@@ -85,10 +77,33 @@ namespace Sistema_de_Biblioteca
 
         public class Emprestimo
         {
-            public Livro Livro { get; set; }
-            public Usuario Usuario { get; set; }
+            public Livro Livro { get; set; } = new Livro();
+            public Usuario Usuario { get; set; } = new Usuario();
             public DateTime DataEmprestimo { get; set; }
             public DateTime DataDevolucao { get; set; }
+
+            public string livros()
+            {
+                var titulo = Livro?.Titulo ?? string.Empty;
+                return titulo switch
+                {
+                    "O Senhor dos Anéis" => "O Senhor dos Anéis",
+                    "Harry Potter" => "Harry Potter",
+                    "O Hobbit" => "O Hobbit",
+                    _ => "Livro não encontrado."
+                };
+            }
+
+            public double ValorLivros()
+            {
+                return livros() switch
+                {
+                    "O Senhor dos Anéis" => 50.0,
+                    "Harry Potter" => 75.0,
+                    "O Hobbit" => 60.0,
+                    _ => 0.0
+                };
+            }
 
             public int CalcularDiasEmprestimo()
             {
@@ -99,10 +114,23 @@ namespace Sistema_de_Biblioteca
             public double CalcularValorFinal()
             {
                 int dias = CalcularDiasEmprestimo();
-                double custo = Livro.CalcularCustoEmprestimo(dias);
-                double valorComDesconto = Usuario.AplicarDesconto(custo);
+                double custo = Livro?.CalcularCustoEmprestimo(dias) ?? 0;
+                double valorComDesconto = Usuario?.AplicarDesconto(custo) ?? custo;
                 return valorComDesconto;
+            }
+
+            public string Relatorio()
+            {
+                string name = Usuario?.Nome ?? "";
+                string book = Livro?.Titulo ?? "";
+                int dias = CalcularDiasEmprestimo();
+                double desconto = Usuario?.CalcularDesconto() ?? 0;
+                double valorSemDesconto = Livro?.CalcularCustoEmprestimo(dias) ?? 0;
+                double value = CalcularValorFinal();
+
+                return $"Usuário: {name}\nLivro: {book}\nDias: {dias}\nDesconto (%): {desconto}\nValor sem Descontos: {valorSemDesconto}\nValor final: {value}";
             }
         }
     }
 }
+
