@@ -1,4 +1,5 @@
 ﻿using Sistema_de_Biblioteca;
+using static Sistema_de_Biblioteca.Biblioteca;
 
 Console.WriteLine("\n--BIBLIOTECA - SISTEMA DE EMPRÉSTIMOS--\n");
 Console.WriteLine("");
@@ -12,7 +13,7 @@ usuario.Nome = Console.ReadLine();
 
 Console.WriteLine($"\nBem-vindo(a), {usuario.Nome}!");
 
-Console.WriteLine("Qual seu tipo de Conta [Ouro, Prata, Bronze]?");
+Console.WriteLine("\nQual seu tipo de Conta [Ouro, Prata, Bronze]?\n");
 usuario.Tipo = Console.ReadLine();
 if (usuario.Tipo.Equals("Ouro", StringComparison.OrdinalIgnoreCase))
 {
@@ -35,8 +36,15 @@ Console.WriteLine("Digite qual dos 3 livros que deseja pegar emprestado (O Senho
 var livroEscolhido = Console.ReadLine();
 emprestimo.Livro = new Biblioteca.Livro { Titulo = livroEscolhido };
 
-Console.WriteLine("Digite a data de empréstimo (formato: dd/MM/yyyy): ");
+// ligando o empréstimo ao usuário (útil se Relatorio() usa dados do usuário)
+emprestimo.usuario = usuario;
+
+Console.WriteLine("Quando você pretende pegar o livro emprestado? (formato: dd/MM/yyyy): ");
 emprestimo.DataEmprestimo = DateTime.Parse(Console.ReadLine());
+
+Console.WriteLine("Em quantos dias você pretende devolver o livro? ");
+var diasEmprestimo = int.Parse(Console.ReadLine());
+emprestimo.DataDevolucao = emprestimo.DataEmprestimo.AddDays(diasEmprestimo);
 
 Console.WriteLine("\n----Aqui está o relatório do seu empréstimo: ---\n");
 Console.WriteLine($"{emprestimo.Relatorio()}");

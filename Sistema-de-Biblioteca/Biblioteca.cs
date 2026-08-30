@@ -60,25 +60,30 @@ namespace Sistema_de_Biblioteca
 
             public double CalcularDesconto()
             {
-                return Tipo switch
+               if (Tipo == "Bronze")
                 {
-                    "Bronze" => 0.00,
-                    "Prata" => 0.10,
-                    "Ouro" => 0.15,
-                    _ => 0.00
-                };
+                    return 0.00;
+                }
+                else if (Tipo == "Prata")
+                {
+                    return 0.10;
+                }
+                else if (Tipo == "Ouro")
+                {
+                    return 0.15;
+                }
+                else
+                {
+                    return 0.00;
+                }
             }
 
-            public double AplicarDesconto(double valor)
-            {
-                return valor - (valor * CalcularDesconto());
-            }
         }
 
         public class Emprestimo
         {
             public Livro Livro { get; set; } = new Livro();
-            public Usuario Usuario { get; set; } = new Usuario();
+            public Usuario usuario { get; set; } = new Usuario();
             public DateTime DataEmprestimo { get; set; }
             public DateTime DataDevolucao { get; set; }
 
@@ -105,6 +110,11 @@ namespace Sistema_de_Biblioteca
                 };
             }
 
+            public double AplicarDesconto(double valor)
+            {
+                return valor - (valor * usuario.CalcularDesconto());
+            }
+
             public int CalcularDiasEmprestimo()
             {
                 TimeSpan diferençaData = DataDevolucao - DataEmprestimo;
@@ -113,22 +123,19 @@ namespace Sistema_de_Biblioteca
 
             public double CalcularValorFinal()
             {
-                int dias = CalcularDiasEmprestimo();
-                double custo = Livro?.CalcularCustoEmprestimo(dias) ?? 0;
-                double valorComDesconto = Usuario?.AplicarDesconto(custo) ?? custo;
-                return valorComDesconto;
+                return AplicarDesconto(ValorLivros());
             }
 
             public string Relatorio()
             {
-                string name = Usuario?.Nome ?? "";
-                string book = Livro?.Titulo ?? "";
+                string nome = usuario.Nome;
+                string book = Livro.Titulo;
                 int dias = CalcularDiasEmprestimo();
-                double desconto = Usuario?.CalcularDesconto() ?? 0;
-                double valorSemDesconto = Livro?.CalcularCustoEmprestimo(dias) ?? 0;
+                double valorSemDesconto = ValorLivros();
+                double desconto = usuario.CalcularDesconto();
                 double value = CalcularValorFinal();
 
-                return $"Usuário: {name}\nLivro: {book}\nDias: {dias}\nDesconto (%): {desconto}\nValor sem Descontos: {valorSemDesconto}\nValor final: {value}";
+                return ($"Usuário: {nome}\nLivro: {book}\nDias: {dias}\nDesconto (%): {desconto}\nValor sem Descontos: {valorSemDesconto}\nValor final: {value}");
             }
         }
     }
