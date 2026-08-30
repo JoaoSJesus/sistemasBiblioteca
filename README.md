@@ -28,7 +28,3 @@ dotnet run --project Sistema-de-Biblioteca/Sistema-de-Biblioteca.csproj
 - Adicionar novos títulos e valores em Emprestimo.ValorLivros().
 - Usar PrecoDiaria do Livro para cálculo por dias.
 - Implementar persistência ou atualização de QuantDisponivel para controlar estoque.
-
-## Perguntas úteis
-- Como adicionar mais livros ao catálogo?
-- Deseja que eu gere um README.md no repositório e um comentário XML de documentação automaticamente?
